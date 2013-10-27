@@ -93,7 +93,7 @@ public class ILS3 {
 			rules[regle_a_changerd] = generator.nextInt(4);
 			rules[regle_a_changere] = generator.nextInt(4);
 			
-			init.modif(rules);
+			init.ajoutReglesBase(rules);
 			
 			//System.out.println("Fitness : " + fit_actuel);
 			

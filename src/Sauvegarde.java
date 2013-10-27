@@ -6,6 +6,8 @@ import java.io.PrintWriter;
 
 public class Sauvegarde {
 	
+	//Classe pour sauvergarder les resultats
+	
 	public PrintWriter ecrivain;
 
 	public Sauvegarde(String nom_fichier, int fitness, int[] rules) throws IOException{
@@ -17,6 +19,8 @@ public class Sauvegarde {
 		printToFile(fitness, rules);
 		
 		ecrivain.close();
+		
+		//System.out.println("Sauvergarde effectuée");
 
 	}
 
