@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.Random;
 
 
@@ -8,95 +9,98 @@ public class IteratedLocalSearch {
 	int [] rules = new int[n * n * n];
 	Initialization init;
 	Automata automate;
+	Random generator;
 
 	public IteratedLocalSearch()
 	{
 		//Initialisation de l'automate et des règles
-		Random generator = new Random();
+		generator = new Random();
 		init = new Initialization();
 		automate = new Automata(20);
 
-		try {
+		init.init(rules);
 
-			for(int i=0;i<216;i++)
-			{		
-				rules[i] = generator.nextInt(4);
-			} 
-		}		
-		catch (Exception e){
-			System.out.println(e.toString());
-		}
 	}
 
-	public void iterer(int nb_iterations, int [] regles, int iterations_avant_perturbation)
+	public void iterer(int nb_iterations, int iterations_avant_perturbation) throws IOException
 	{
-		//Nouvelle Random Seed
-		Random generator = new Random();
 
+		int compteur = 0;
+		
 		//Tableau de règles qui contiendra celles de la solution précédent si le voisin est moins bon
-		int [] anciennes_regles;
+		int [] meilleures_regles = new int[216];
 
 		//Indice de la règle à changer
-		int regle_a_changer = 0;
-		int fit = 0;
+		int regle_a_changera = 0;
+		int regle_a_changerb = 0;
+		int regle_a_changerc = 0;
+		int regle_a_changerd = 0;
+		int regle_a_changere = 0;
 
-		//Compteur qui servira à compter les itérations pour savoir quand lancer une perturbation
-		int compteur = 0;
+		//On réinitialise les règles pour garder celles de Initialization
+		//init.init(regles);
 
-		//Flag pour signaler le lancement d'une perturbation et éviter de l'écraser avec les anciennes règles si moins bonne performacnes
-		int flag_perturbation = 0;
+		int fit_actuel = automate.f(rules, 20);
+		int fit_ancien = -1;
 
 		for (int i = 1; i < nb_iterations; i++) {
-
-			//On réinitialise les règles pour garder celles de Initialization
-			init.init(regles);
-			//On stocke les règles pour pouvoir les recopier en cas de moins bonne performance
-			anciennes_regles = copier_tableau(regles);
-			//On choisit une règle au hasard à changer
-			regle_a_changer = generator.nextInt(regles.length);
-			//On lui affecte une valeur aléatoire
-			regles[regle_a_changer] = generator.nextInt(4);
-
+			
 			if(compteur == iterations_avant_perturbation)
 			{
-				regles = perturbation(21, regles);
-				flag_perturbation = 1;
+				perturbations();
+				System.out.println("Perturbations");
 				compteur = 0;
 			}
-			if(automate.f(regles, 20) >= fit)
+			
+			generator = new Random();
+			if(fit_actuel >= fit_ancien)
 			{
-				if(automate.f(regles, 20) > fit) System.out.println("Nouvelle performance : " + fit);
-				fit = automate.f(regles, 20);
+				meilleures_regles = copier_tableau(rules);
+
+				//On stocke les règles pour pouvoir les recopier en cas de moins bonne performance
+				if(fit_actuel > fit_ancien)
+				{
+					System.out.println("Meilleure perf : " + fit_actuel);
+					Sauvegarde save = new Sauvegarde("prout", fit_actuel, meilleures_regles);
+					compteur = 0;
+				}
+				else
+				{
+					compteur ++;
+				}
+				
+				fit_ancien = fit_actuel;
+				
 			}
 			else
 			{
-				if(flag_perturbation == 1) flag_perturbation = 0;
-				else
-				{
-					regles = copier_tableau(anciennes_regles);
-					compteur += 1;
-					//System.out.println("BAD : " + automate.f(regles, 20));
-				}
+				rules = copier_tableau(meilleures_regles);
+				compteur ++;
 			}
+
+
+			//On choisit une règle au hasard à changer
+			regle_a_changera = generator.nextInt(rules.length);
+			regle_a_changerb = generator.nextInt(rules.length);
+			regle_a_changerc = generator.nextInt(rules.length);
+			regle_a_changerd = generator.nextInt(rules.length);
+			regle_a_changere = generator.nextInt(rules.length);
+
+			//On lui affecte une valeur aléatoire
+			rules[regle_a_changera] = generator.nextInt(4);
+			rules[regle_a_changerb] = generator.nextInt(4);
+			rules[regle_a_changerc] = generator.nextInt(4);
+			rules[regle_a_changerd] = generator.nextInt(4);
+			rules[regle_a_changere] = generator.nextInt(4);
+			
+			init.ajoutReglesBase(rules);
+			
+			//System.out.println("Fitness : " + fit_actuel);
+			
+			fit_actuel = automate.f(rules, 20);
 		}
 		System.out.println("Fin");
 
-	}
-
-	public int[] perturbation(int taille_perturbation, int[] regles)
-	{
-		Random generator = new Random();
-		int regle_a_perturber = 0;
-		int[] regles_a_retourner = copier_tableau(regles);
-		
-		for (int i = 0; i < taille_perturbation; i++) {
-			
-			regle_a_perturber = generator.nextInt(regles.length);
-			regles_a_retourner[regle_a_perturber] = generator.nextInt(4);
-			
-		}
-		
-		return regles_a_retourner;
 	}
 
 	//Fonction qui permet de recopier un tableau en entrée
@@ -106,9 +110,46 @@ public class IteratedLocalSearch {
 
 		for (int i = 0; i < tableau_a_copier.length; i++) {
 			result[i] = tableau_a_copier[i];	
+			//System.out.print(result[i] + " ");
 		}
 
 		return result;
+	}
+	
+	public void perturbations()
+	{
+		//perturbation_uniforme();
+		perturbation_bit_flip();
+	}
+	
+	public void perturbation_uniforme()
+	{
+		Random generator = new Random();
+		
+		for (int i = 0; i < rules.length; i++) {
+			if(generator.nextBoolean())
+			{
+				int new_val = generator.nextInt(4);
+				while(new_val == rules[i]) new_val = generator.nextInt(4);
+				rules[i] = new_val;
+			}
+			
+		}
+	}
+	
+	public void perturbation_bit_flip()
+	{
+		Random generator = new Random();
+		
+		for (int i = 0; i < rules.length; i++) {
+			if(generator.nextInt(216) == i)
+			{
+				int new_val = generator.nextInt(4);
+				while(new_val == rules[i]) new_val = generator.nextInt(4);
+				rules[i] = new_val;
+			}
+			
+		}
 	}
 
 }

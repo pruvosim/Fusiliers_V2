@@ -13,7 +13,7 @@ public class MainILS3 {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		ILS3 ils = new ILS3();
+		IteratedLocalSearch ils = new IteratedLocalSearch();
 		ils.iterer(100000000, 1000000);
 		
 	}
