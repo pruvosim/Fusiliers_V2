@@ -8,8 +8,7 @@ public class MainEA {
 		// TODO Auto-generated method stub
 		
 		EvolutionaryAlgorithm EA = new EvolutionaryAlgorithm(100, 50);
-		EA.selectionParentale();
-		System.out.println(EA.toString());
+		EA.run();
 		
 	}
 

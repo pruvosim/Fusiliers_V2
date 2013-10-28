@@ -24,6 +24,16 @@ public class Population {
 		}
 	}
 	
+	public Population(Regles[] reg)
+	{
+		taille_population = reg.length;
+		regles = new Regles[taille_population];
+		
+		for (int i = 0; i < taille_population; i++) {
+			regles[i] = reg[i];
+		}
+	}
+	
 	public void init()
 	{
 		for (int i = 0; i < taille_population; i++) {

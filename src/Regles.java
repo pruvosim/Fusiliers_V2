@@ -25,10 +25,11 @@ public class Regles {
 		init.init(rules);
 	}
 	
-	public void eval()
+	public int eval()
 	{
 		Automata auto = new Automata(25);
 		fitness = auto.f(rules, 25);
+		return fitness;
 	}
 
 	
