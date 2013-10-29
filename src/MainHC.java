@@ -32,6 +32,6 @@ public class MainHC {
 		//HC.iterer(10000000);
 		
 		HillClimber test = new HillClimber();
-		test.runForStatistics(1, 1000000);
+		test.runForStatistics(10, 10000000);
 	}
 }

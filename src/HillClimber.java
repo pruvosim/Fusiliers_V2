@@ -47,9 +47,10 @@ public class HillClimber {
 
 		int fit_actuel = automate.f(rules, 20);
 		int fit_ancien = -1;
+		int best_fitness = -1;
 		
-		String outName = "C:/Documents and Settings/spruvost/Mes documents/Resultats_HC/HillClimber_";
-		String date = new SimpleDateFormat("dd_MM_yyyy").format(new Date());
+		String outName = "C:/Users/Simon/Desktop/Resultats_HC/HillClimber_";
+		String date = new SimpleDateFormat("dd_MM_yy-HH_mm_ss").format(new Date());
 		outName += date + ".dat";
 		
 		PrintWriter ecrivain;
@@ -67,6 +68,7 @@ public class HillClimber {
 				{
 					//System.out.println("Meilleure perf : " + fit_actuel);
 					printToFile(fit_actuel, meilleures_regles, ecrivain);
+					best_fitness = fit_actuel;
 					//Sauvegarde save = new Sauvegarde("prout", fit_actuel, meilleures_regles);
 				}
 				
@@ -90,7 +92,7 @@ public class HillClimber {
 			
 			fit_actuel = automate.f(rules, 20);
 		}
-		System.out.println("Fin");
+		System.out.println("Fin. Best Fitness : " + best_fitness + ".Fichier : " + outName);
 		ecrivain.close();
 	}
 	
