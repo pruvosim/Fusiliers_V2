@@ -48,6 +48,7 @@ public class IteratedLocalSearch {
 			if(compteur == iterations_avant_perturbation)
 			{
 				perturbations();
+				init.ajoutReglesBase(meilleures_regles);
 				System.out.println("Perturbations");
 				compteur = 0;
 			}
@@ -61,7 +62,7 @@ public class IteratedLocalSearch {
 				if(fit_actuel > fit_ancien)
 				{
 					System.out.println("Meilleure perf : " + fit_actuel);
-					Sauvegarde save = new Sauvegarde("prout", fit_actuel, meilleures_regles);
+					//Sauvegarde save = new Sauvegarde("prout", fit_actuel, meilleures_regles);
 					compteur = 0;
 				}
 				else

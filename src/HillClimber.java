@@ -1,4 +1,9 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 
 
@@ -25,10 +30,12 @@ public class HillClimber {
 	public void iterer(int nb_iterations) throws IOException
 	{
 
-		//Tableau de règles qui contiendra celles de la solution précédent si le voisin est moins bon
+		//Tableau de règles qui contiendra celles de la solution précédente si le voisin est moins bon
 		int [] meilleures_regles = new int[216];
 
 		//Indice de la règle à changer
+		int regle_a_changer = 0;
+		
 		int regle_a_changera = 0;
 		int regle_a_changerb = 0;
 		int regle_a_changerc = 0;
@@ -40,6 +47,14 @@ public class HillClimber {
 
 		int fit_actuel = automate.f(rules, 20);
 		int fit_ancien = -1;
+		
+		String outName = "C:/Documents and Settings/spruvost/Mes documents/Resultats_HC/HillClimber_";
+		String date = new SimpleDateFormat("dd_MM_yyyy").format(new Date());
+		outName += date + ".dat";
+		
+		PrintWriter ecrivain;
+		
+		ecrivain =  new PrintWriter(new BufferedWriter(new FileWriter(outName)));
 
 		for (int i = 1; i < nb_iterations; i++) {
 			
@@ -48,11 +63,11 @@ public class HillClimber {
 			{
 				meilleures_regles = copier_tableau(rules);
 
-				//On stocke les règles pour pouvoir les recopier en cas de moins bonne performance
 				if(fit_actuel > fit_ancien)
 				{
-					System.out.println("Meilleure perf : " + fit_actuel);
-					Sauvegarde save = new Sauvegarde("prout", fit_actuel, meilleures_regles);
+					//System.out.println("Meilleure perf : " + fit_actuel);
+					printToFile(fit_actuel, meilleures_regles, ecrivain);
+					//Sauvegarde save = new Sauvegarde("prout", fit_actuel, meilleures_regles);
 				}
 				
 				fit_ancien = fit_actuel;
@@ -62,29 +77,39 @@ public class HillClimber {
 				rules = copier_tableau(meilleures_regles);
 			}
 
-
-			//On choisit une règle au hasard à changer
-			regle_a_changera = generator.nextInt(rules.length);
-			regle_a_changerb = generator.nextInt(rules.length);
-			regle_a_changerc = generator.nextInt(rules.length);
-			regle_a_changerd = generator.nextInt(rules.length);
-			regle_a_changere = generator.nextInt(rules.length);
-
-			//On lui affecte une valeur aléatoire
-			rules[regle_a_changera] = generator.nextInt(4);
-			rules[regle_a_changerb] = generator.nextInt(4);
-			rules[regle_a_changerc] = generator.nextInt(4);
-			rules[regle_a_changerd] = generator.nextInt(4);
-			rules[regle_a_changere] = generator.nextInt(4);
+			//On change j regles au lieu d'une seule comme dans l'exemple du OneMax
+			for (int j = 0; j < 5; j++) {
+				
+				regle_a_changer = generator.nextInt(rules.length);
+				rules[regle_a_changer] = generator.nextInt(4);
+				
+			}
 			
+			//On laisse les regles de bases
 			init.ajoutReglesBase(rules);
-			
-			//System.out.println("Fitness : " + fit_actuel);
 			
 			fit_actuel = automate.f(rules, 20);
 		}
 		System.out.println("Fin");
-
+		ecrivain.close();
+	}
+	
+	public void runForStatistics(int nb_HillClimber, int nb_iterations) throws IOException
+	{
+		for (int i = 0; i < nb_HillClimber; i++) 
+		{
+			HillClimber HC = new HillClimber();
+			HC.iterer(nb_iterations);
+		}
+	}
+	
+	public static void printToFile(int fitness, int [] rules, PrintWriter ecrivain) {
+		ecrivain.print(fitness);
+		for(int i = 0; i < 216; i++) {
+			ecrivain.print(" ");
+			ecrivain.print(rules[i]);
+		}
+		ecrivain.println();
 	}
 
 	//Fonction qui permet de recopier un tableau en entrée

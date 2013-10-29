@@ -28,7 +28,10 @@ public class MainHC {
 
 		//int ancien_fit = 0;
 		
-		HillClimber HC = new HillClimber();
-		HC.iterer(10000000);
+		//HillClimber HC = new HillClimber();
+		//HC.iterer(10000000);
+		
+		HillClimber test = new HillClimber();
+		test.runForStatistics(1, 1000000);
 	}
 }
