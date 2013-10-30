@@ -21,7 +21,7 @@ public class HillClimber {
 		//Initialisation de l'automate et des règles
 		generator = new Random();
 		init = new Initialization();
-		automate = new Automata(20);
+		automate = new Automata(25);
 
 		init.init(rules);
 
@@ -36,18 +36,17 @@ public class HillClimber {
 		//Indice de la règle à changer
 		int regle_a_changer = 0;
 		
-		int regle_a_changera = 0;
-		int regle_a_changerb = 0;
-		int regle_a_changerc = 0;
-		int regle_a_changerd = 0;
-		int regle_a_changere = 0;
+		int nb_changements = 0;
+		
 
 		//On réinitialise les règles pour garder celles de Initialization
 		//init.init(regles);
 
-		int fit_actuel = automate.f(rules, 20);
+		int fit_actuel = automate.f(rules, 25);
 		int fit_ancien = -1;
 		int best_fitness = -1;
+		
+		nb_changements = generator.nextInt(51);
 		
 		String outName = "C:/Users/Simon/Desktop/Resultats_HC/HillClimber_";
 		String date = new SimpleDateFormat("dd_MM_yy-HH_mm_ss").format(new Date());
@@ -78,9 +77,10 @@ public class HillClimber {
 			{
 				rules = copier_tableau(meilleures_regles);
 			}
+			
 
 			//On change j regles au lieu d'une seule comme dans l'exemple du OneMax
-			for (int j = 0; j < 5; j++) {
+			for (int j = 0; j < nb_changements; j++) {
 				
 				regle_a_changer = generator.nextInt(rules.length);
 				rules[regle_a_changer] = generator.nextInt(4);
@@ -90,9 +90,9 @@ public class HillClimber {
 			//On laisse les regles de bases
 			init.ajoutReglesBase(rules);
 			
-			fit_actuel = automate.f(rules, 20);
+			fit_actuel = automate.f(rules, 25);
 		}
-		System.out.println("Fin. Best Fitness : " + best_fitness + ".Fichier : " + outName);
+		System.out.println("Fin. Best Fitness : " + best_fitness + " Nb Changements : " + nb_changements +  ". Fichier : " + outName);
 		ecrivain.close();
 	}
 	
